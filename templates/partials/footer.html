@@ -1,0 +1,16 @@
+<footer>
+  <hr class="slender">
+  <ul class="footer-links">
+    <li><a href="mailto:{{ site.email }}"><span class="icon-mail3"></span></a></li>
+    {% for entry in site.social %}
+    <li>
+      <a href="{{ entry.link }}"><span class="{{ entry.icon }}"></span></a>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="credits">
+    <span>&copy; {{ now.year }}&nbsp;&nbsp;{{ site.author | upper }}</span><br>
+    <span><a href="https://github.com/hyperphantasia/tufte-python">tufte-python</a> is designed for {{
+      site.subtitle }}</span><br>
+  </div>
+</footer>

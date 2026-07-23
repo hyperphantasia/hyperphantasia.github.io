@@ -6,7 +6,7 @@ categories: history photography
 tags: history photography
 ---
 
-{% epigraph 'Men wanted: for hazardous journey. Small wages, bitter cold, long months of complete darkness, constant danger, safe return doubtful. Honour and recognition in case of success.' 'Attributed to Ernest Shackleton' ''%}
+{% epigraph 'Men wanted: for hazardous journey. Small wages, bitter cold, long months of complete darkness, constant danger, safe return doubtful. Honour and recognition in case of success.' 'Attributed to Ernest Shackleton' '1913'%}
 
 {% marginfigure 'shackleton-ad' 'assets/img/1914-08/shackadvert3.png' 'One of the earliest references to Shackleton’s ad is thought to be in the October 1949 edition of *The 100 Greatest Advertisements 1852–1958: Who Wrote Them and What They Did*, by Julian Lewis Watkins. <a href="http://www.antarctic-circle.org/advert.htm">The Antarctic Circle.</a>' %}
 

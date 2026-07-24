@@ -1,0 +1,46 @@
+name: Update profile README
+
+on:
+  workflow_run:
+    workflows: ["Build and deploy site"]   # <-- must match the `name:` field in deploy workflow's yml
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: {}     # lets you trigger it manually to backfill/test
+
+jobs:
+  update-profile:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout blog repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Checkout profile repo
+        uses: actions/checkout@v4
+        with:
+          repository: hyperphantasia/hyperphantasia        # <-- change
+          token: ${{ secrets.PROFILE_REPO_TOKEN }}
+          path: profile-repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Regenerate latest-posts section
+        run: python scripts/update_profile_readme.py
+
+      - name: Commit and push if changed
+        run: |
+          cd profile-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes to commit."
+          else
+            git add README.md
+            git commit -m "chore: update latest posts list"
+            git push
+          fi

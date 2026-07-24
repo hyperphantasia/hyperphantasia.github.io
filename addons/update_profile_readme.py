@@ -1,33 +1,36 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# =============================================================================
+# File name: update_profile_readme.py
+# Author: brkln (github.com/hyperphantasia)
+# Location: 33° 31′ 0″ N, 86° 48′ 54″ W
+# Listening: "Alabama" takes 4 & 5
+# Date created: 2026-07-24
+# Version = "1.0"
+# License = "MIT License"
+# =============================================================================
 """
 Regenerate the "Latest posts" section of a GitHub profile README from the
 markdown posts in this blog repo.
 
 Idempotent & incremental:
-- The list is always fully rebuilt from the post files on disk (the source
-  of truth), not appended to, so re-running never duplicates entries and
-  always reflects the current top N posts.
-- The section lives between two HTML marker comments. If the markers
-  aren't found yet (first run), the section is appended at the end of the
-  README. On every later run, the existing section between the markers is
-  replaced in place.
-- If nothing changed, the README is left untouched (byte-identical),
-  so the workflow can skip the commit step.
-
-Adjust the CONFIG block below to match your setup.
+- The list is always fully rebuilt from the post files. 
+Re-running never duplicates entries and always reflects the current top N posts.
 """
+# =============================================================================
 
 import re
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from typing import Optional
 
 # ----------------------------- CONFIG -------------------------------------
 POSTS_DIR = Path("content/posts")                       # where .md posts live
 # profile repo checked out here
 README_PATH = Path("profile-repo/README.md")
-SITE_BASE_URL = "https://hyperphantasia.github.io"
-PERMALINK_FMT = "{base}/articles/{year}/{slug}/"        # adapt to page link pattern
+SITE_BASE_URL = "https://hyperphantasia.github.io"      # adapt to page link pattern
+PERMALINK_FMT = "{base}/articles/{year}/{slug}/"
 LOWERCASE_SLUG = True
 MAX_POSTS = 3
 # ----------------------------------------------------------------------------
@@ -41,7 +44,16 @@ TITLE_RE = re.compile(r"^title:\s*['\"]?(.*?)['\"]?\s*$", re.MULTILINE)
 DATE_RE = re.compile(r"^date:\s*['\"]?([\d-]{10})")
 
 
-def parse_post(path: Path):
+def parse_post(path: Path) -> Optional[dict]:
+    """Parse a markdown post file and extract metadata.
+
+    Args:
+        path: Path to the markdown post file.
+
+    Returns:
+        A dictionary containing 'title', 'date', and 'url', or None if the
+        file format doesn't match the expected pattern.
+    """
     m = FILENAME_RE.match(path.name)
     if not m:
         return None
@@ -77,7 +89,12 @@ def parse_post(path: Path):
     return {"title": title, "date": post_date, "url": url}
 
 
-def collect_posts():
+def collect_posts() -> list[dict]:
+    """Collect and sort all posts by date in descending order.
+
+    Returns:
+        A list of post dictionaries sorted by date (newest first).
+    """
     if not POSTS_DIR.exists():
         return []
     posts = [p for p in (parse_post(f) for f in POSTS_DIR.glob("*.md")) if p]
@@ -85,19 +102,35 @@ def collect_posts():
     return posts
 
 
-def build_section(posts):
+def build_section(posts: list[dict]) -> str:
+    """Build the latest posts markdown section.
+
+    Args:
+        posts: A list of post dictionaries.
+
+    Returns:
+        A formatted markdown string with the latest posts section.
+    """
     lines = [START_MARKER, "", "*Latest blog posts:*", ""]
     if not posts:
         lines.append("_No posts yet._")
     else:
         for post in posts[:MAX_POSTS]:
             lines.append(
-                f"- [{post['title']}]({post['url']}): {post['date'].isoformat()}")
+                f"- [{post['title']}]({post['url']}) ({post['date'].isoformat()})")
     lines += ["", END_MARKER]
     return "\n".join(lines)
 
 
 def update_readme(section: str) -> bool:
+    """Update the README with the latest posts section.
+
+    Args:
+        section: The formatted markdown section to insert.
+
+    Returns:
+        True if the README was modified, False otherwise.
+    """
     content = README_PATH.read_text(
         encoding="utf-8") if README_PATH.exists() else ""
 
@@ -118,7 +151,8 @@ def update_readme(section: str) -> bool:
     return True
 
 
-def main():
+def main() -> None:
+    """Main entry point. Collect posts and update the README."""
     posts = collect_posts()
     section = build_section(posts)
     update_readme(section)

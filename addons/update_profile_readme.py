@@ -26,8 +26,9 @@ from pathlib import Path
 POSTS_DIR = Path("content/posts")                       # where .md posts live
 # profile repo checked out here
 README_PATH = Path("profile-repo/README.md")
-SITE_BASE_URL = "https://hyperphantasia.github.io"      # <-- change
-PERMALINK_FMT = "{base}/{year}/{month:02d}/{day:02d}/{slug}/"
+SITE_BASE_URL = "https://hyperphantasia.github.io"
+PERMALINK_FMT = "{base}/articles/{year}/{slug}/"        # adapt to page link pattern
+LOWERCASE_SLUG = True
 MAX_POSTS = 3
 # ----------------------------------------------------------------------------
 
@@ -45,6 +46,8 @@ def parse_post(path: Path):
     if not m:
         return None
     year, month, day, slug = m.groups()
+    if LOWERCASE_SLUG:
+        slug = slug.lower()  # match page pattern
     post_date = date(int(year), int(month), int(day))
 
     text = path.read_text(encoding="utf-8")
@@ -83,13 +86,13 @@ def collect_posts():
 
 
 def build_section(posts):
-    lines = [START_MARKER, "", "*Latest posts:*", ""]
+    lines = [START_MARKER, "", "*Latest blog posts:*", ""]
     if not posts:
         lines.append("_No posts yet._")
     else:
         for post in posts[:MAX_POSTS]:
             lines.append(
-                f"- [{post['title']}]({post['url']}) — {post['date'].isoformat()}")
+                f"- [{post['title']}]({post['url']}): {post['date'].isoformat()}")
     lines += ["", END_MARKER]
     return "\n".join(lines)
 

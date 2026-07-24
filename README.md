@@ -1,5 +1,6 @@
 # tufte-python
 [![Build and deploy site](https://github.com/hyperphantasia/hyperphantasia.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/hyperphantasia/hyperphantasia.github.io/actions/workflows/deploy.yml)
+[![Update profile README](https://github.com/hyperphantasia/hyperphantasia.github.io/actions/workflows/update-profile.yml/badge.svg)](https://github.com/hyperphantasia/hyperphantasia.github.io/actions/workflows/update-profile.yml)
 
 **Edward Rolf Tufte makes it [visual](https://en.wikipedia.org/wiki/Edward_Tufte#Infographic_work), Donald Ervin Knuth makes it [elegant](https://en.wikipedia.org/wiki/Donald_Knuth#Digital_typesetting).**
 
@@ -37,6 +38,7 @@
     - [Adding your own theme](#adding-your-own-theme)
     - [A note on accessibility](#a-note-on-accessibility)
   - [Deploying (CI/CD)](#deploying-cicd)
+    - [User profile readme updater](#user-profile-readme-updater)
   - [Project layout](#project-layout)
   - [Differences from the original Jekyll theme](#differences-from-the-original-jekyll-theme)
 
@@ -268,27 +270,38 @@ To enable it:
 3. Update `config.yml`'s `url`/`baseurl` to match your GitHub Pages URL.
 4. Push to `main`. The workflow builds and deploys automatically.
 
+### User profile readme updater
+
+This [user profile](https://github.com/hyperphantasia) updates automatically whenever new blog posts are published. 
+
+A GitHub Actions workflow ([`update-profile`](.github/workflows/update-profile.yml)):
+
+1. Triggers after the [`Build and deploy site`](.github/workflows/deploy.yml) workflow completes successfully
+2. It fetches the latest blog posts and updates this [README](https://github.com/hyperphantasia/hyperphantasia/blob/main/README.md) with links to recent posts
+
 ## Project layout
 
 ```txt
 .
-├── config.yml                  # site configuration
+├── addons/
+│   └── update_profile_readme.py # user profile blogpost list updater
+├── config.yml                   # site configuration
 ├── content/
-│   ├── posts/                  # blog posts (YYYY-MM-DD-slug.md)
-│   └── pages/                  # standalone pages (slug.md)
-├── templates/                  # Jinja2 templates (layouts + partials)
+│   ├── posts/                   # blog posts (YYYY-MM-DD-slug.md)
+│   └── pages/                   # standalone pages (slug.md)
+├── templates/                   # Jinja2 templates (layouts + partials)
 ├── static/
 │   ├── css/
-│   │   ├── tufte.css           # structural CSS
-│   │   ├── print.css           # structural CSS
-│   │   └── themes/             # one file per selectable color theme
-│   ├── js/                     # theme-toggle.js (dark-mode switch logic)
-│   ├── fonts/                  # static assets, copied as-is
-│   └── img/                    # static assets, copied as-is
-├── tufte_ssg/                  # the generator itself
-├── build.py                    # CLI: build / serve / watch
-├── .tufte_cache.json           # Incremental build cache (gitignored, auto-created)
-└── .github/workflows/          # GitHub Actions CI/CD
+│   │   ├── tufte.css            # structural CSS
+│   │   ├── print.css            # structural CSS
+│   │   └── themes/              # one file per selectable color theme
+│   ├── js/                      # theme-toggle.js (dark-mode switch logic)
+│   ├── fonts/                   # static assets, copied as-is
+│   └── img/                     # static assets, copied as-is
+├── tufte_ssg/                   # the generator itself
+├── build.py                     # CLI: build / serve / watch
+├── .tufte_cache.json            # Incremental build cache (gitignored, auto-created)
+└── .github/workflows/           # GitHub Actions CI/CD files
 ```
 
 ## Differences from the original Jekyll theme

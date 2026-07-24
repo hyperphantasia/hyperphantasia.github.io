@@ -25,7 +25,7 @@ from pathlib import Path
 # ----------------------------- CONFIG -------------------------------------
 POSTS_DIR = Path("content/posts")                       # where .md posts live
 # profile repo checked out here
-README_PATH = Path("hyperphantasia/hyperphantasia/README.md")
+README_PATH = Path("profile-repo/README.md")
 SITE_BASE_URL = "https://hyperphantasia.github.io"      # <-- change
 PERMALINK_FMT = "{base}/{year}/{month:02d}/{day:02d}/{slug}/"
 MAX_POSTS = 3

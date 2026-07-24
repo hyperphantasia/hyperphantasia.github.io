@@ -30,7 +30,7 @@ jobs:
           python-version: "3.12"
 
       - name: Regenerate latest-posts section
-        run: python scripts/update_profile_readme.py
+        run: python addons/update_profile_readme.py
 
       - name: Commit and push if changed
         run: |
